@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class RoomTransition : MonoBehaviour
 {
-    [SerializeField] private float fadeDuration = 0.1f;
+    [SerializeField] private float fadeDuration = 1.5f;
 
     [Header("방 전환 시 사용되는 검은 화면")]
     public GameObject blackScreen;
@@ -26,6 +26,10 @@ public class RoomTransition : MonoBehaviour
 
     private IEnumerator Transition(int nextRoomIndex)
     {
+        // ⛔ 트랜지션 시작하자마자 버튼 숨기기
+        Transform currentMoveButtons = rooms[currentRoomIndex].transform.Find("MoveButtons");
+        if (currentMoveButtons != null) currentMoveButtons.gameObject.SetActive(false);
+
         blackScreen.SetActive(true);
         Image image = blackScreen.GetComponent<Image>();
         if (image != null)
@@ -39,6 +43,8 @@ public class RoomTransition : MonoBehaviour
 
             SetRoomActive(rooms[currentRoomIndex], false);
             SetRoomActive(rooms[nextRoomIndex], true);
+            Transform nextMoveButtons = rooms[nextRoomIndex].transform.Find("MoveButtons");
+            if (nextMoveButtons != null) nextMoveButtons.gameObject.SetActive(true);
             currentRoomIndex = nextRoomIndex;
 
             // Fade out the black screen
@@ -58,6 +64,13 @@ public class RoomTransition : MonoBehaviour
         for (int i = 0; i < rooms.Count; i++)
         {
             SetRoomActive(rooms[i], i == currentRoomIndex);
+
+            // 모든 MoveButtons 오브젝트는 시작 시 비활성화
+            Transform moveButtons = rooms[i].transform.Find("MoveButtons");
+            if (moveButtons != null)
+            {
+                moveButtons.gameObject.SetActive(false);
+            }
         }
 
         blackScreen.SetActive(false);
