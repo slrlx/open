@@ -13,6 +13,10 @@ public class RoomTransition : MonoBehaviour
     [Header("Room1~Room5 오브젝트들")]
     public List<GameObject> rooms;
 
+    [Header("전환 시 재생할 효과음")]
+    public AudioClip footstepSFX;
+    private AudioSource audioSource;
+
     [SerializeField] private int currentRoomIndex = 0;
 
     public void MoveToRoom(int index)
@@ -31,6 +35,12 @@ public class RoomTransition : MonoBehaviour
         if (currentMoveButtons != null) currentMoveButtons.gameObject.SetActive(false);
 
         blackScreen.SetActive(true);
+
+        if (footstepSFX != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(footstepSFX);
+        }
+
         Image image = blackScreen.GetComponent<Image>();
         if (image != null)
         {
@@ -74,6 +84,9 @@ public class RoomTransition : MonoBehaviour
         }
 
         blackScreen.SetActive(false);
+
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
     }
 
     // 이 함수가 모든 자식까지 포함해서 SetActive를 조절함

@@ -11,7 +11,6 @@ public class HintCoinButton : MonoBehaviour
 
     void Start()
     {
-        // 이미 수집했는지 확인
         if (PlayerPrefs.GetInt(coinID, 0) == 1)
         {
             if (buttonToDisable != null)
@@ -26,23 +25,25 @@ public class HintCoinButton : MonoBehaviour
     {
         if (PlayerPrefs.GetInt(coinID, 0) == 1) return; // 중복 수집 방지
 
-        // 코인 증가
         HintCoinManager.Instance.CollectCoin();
 
-        // 저장
         PlayerPrefs.SetInt(coinID, 1);
         PlayerPrefs.Save();
 
-        // 사운드 재생
         if (collectSFX != null)
+        {
+            Debug.Log("HintCoinButton 사운드 재생: " + collectSFX.name);
             audioSource.PlayOneShot(collectSFX);
+        }
+        else
+        {
+            Debug.LogWarning("HintCoinButton collectSFX가 할당되지 않았습니다!");
+        }
 
-        // 버튼 비활성화
         if (buttonToDisable != null)
             buttonToDisable.gameObject.SetActive(false);
     }
 
-    // ✅ 이걸 추가하세요
     public void ResetHintCoin()
     {
         PlayerPrefs.DeleteKey(coinID);
