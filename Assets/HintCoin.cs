@@ -2,39 +2,44 @@ using UnityEngine;
 
 public class HintCoin : MonoBehaviour
 {
-    public bool isCollected = false;
-
-    // 토글 버튼 오브젝트 (에디터에서 할당)
-    public GameObject toggleButton;
-
-    // 유니크한 ID를 부여 (예: HintCoin_1, HintCoin_2 등)
     public string coinID;
+    public AudioClip collectSFX;
+    private AudioSource audioSource;
+
+    private bool isCollected = false;
 
     void Start()
     {
         if (PlayerPrefs.GetInt(coinID, 0) == 1)
         {
             isCollected = true;
-            gameObject.SetActive(false);
+            gameObject.SetActive(false); // 이미 수집된 코인이면 꺼짐
+        }
+        else
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
         }
     }
 
-    void OnMouseDown()
+    // ✅ UI 버튼에서 호출할 함수
+    public void CollectFromUIButton()
     {
         if (isCollected) return;
 
         isCollected = true;
+
+        if (collectSFX != null)
+            audioSource.PlayOneShot(collectSFX);
+
         HintCoinManager.Instance.CollectCoin();
-        gameObject.SetActive(false);
 
         PlayerPrefs.SetInt(coinID, 1);
         PlayerPrefs.Save();
 
-        if (toggleButton != null)
-        {
-            toggleButton.SetActive(false);  // 토글 버튼 비활성화
-        }
+        HintCoinManager.Instance.UnregisterCoin(this.gameObject);
 
-        // 추가로 이펙트, 사운드 호출 가능
+        // 소리 재생 시간 후 삭제
+        Destroy(gameObject, collectSFX != null ? collectSFX.length : 0f);
     }
 }
