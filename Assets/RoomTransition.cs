@@ -64,7 +64,7 @@ public class RoomTransition : MonoBehaviour
                 yield return null;
             }
 
-            blackScreen.SetActive(false);
+            // blackScreen.SetActive(false);
         }
     }
 
@@ -84,6 +84,13 @@ public class RoomTransition : MonoBehaviour
         }
 
         blackScreen.SetActive(false);
+
+        // Disable raycast blocking on the black screen image after hiding it
+        Image blackImage = blackScreen.GetComponent<Image>();
+        if (blackImage != null)
+        {
+            blackImage.raycastTarget = false;
+        }
 
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;

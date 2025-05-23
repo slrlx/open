@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 public class RoomButtonController : MonoBehaviour
 {
     public GameObject moveButtons;      // 이동 버튼 묶음
-    public GameObject hintCoinButtons;  // 힌트 코인 버튼 묶음
+    public GameObject moveImage;         // 이동 이미지
 
     private bool isMoveButtonsActive = false;
 
@@ -16,8 +16,10 @@ public class RoomButtonController : MonoBehaviour
         // 이동 버튼은 토글 상태에 맞게 활성화
         moveButtons.SetActive(isMoveButtonsActive);
 
-        // 힌트 코인 버튼은 이동 버튼이 켜지면 꺼지고, 꺼지면 켜짐
-        hintCoinButtons.SetActive(!isMoveButtonsActive);
+        if (moveImage != null)
+        {
+            moveImage.SetActive(isMoveButtonsActive);
+        }
     }
 
     private void Update()
@@ -29,9 +31,6 @@ public class RoomButtonController : MonoBehaviour
             {
                 isMoveButtonsActive = false;
                 moveButtons.SetActive(false);
-
-                // 힌트 코인 버튼 다시 켜기
-                hintCoinButtons.SetActive(true);
             }
         }
     }
