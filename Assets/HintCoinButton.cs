@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class HintCoinButton : MonoBehaviour
 {
     public string coinID = "HintCoin_1";        // 유니크한 키
     public AudioClip collectSFX;                // 효과음
     public Button buttonToDisable;              // 클릭 후 꺼질 버튼 (자기 자신)
+    public HintCoinPopupUI popupUIController;
 
     private AudioSource audioSource;
 
@@ -14,10 +16,14 @@ public class HintCoinButton : MonoBehaviour
         if (PlayerPrefs.GetInt(coinID, 0) == 1)
         {
             if (buttonToDisable != null)
-                buttonToDisable.gameObject.SetActive(false); // 이미 수집된 버튼은 숨김
+                buttonToDisable.gameObject.SetActive(false);
         }
 
-        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
         audioSource.playOnAwake = false;
     }
 
@@ -30,18 +36,12 @@ public class HintCoinButton : MonoBehaviour
         PlayerPrefs.SetInt(coinID, 1);
         PlayerPrefs.Save();
 
-        if (collectSFX != null)
+        if (popupUIController != null)
         {
-            Debug.Log("HintCoinButton 사운드 재생: " + collectSFX.name);
-            audioSource.PlayOneShot(collectSFX);
-        }
-        else
-        {
-            Debug.LogWarning("HintCoinButton collectSFX가 할당되지 않았습니다!");
+            popupUIController.ShowPopup();
         }
 
-        if (buttonToDisable != null)
-            buttonToDisable.gameObject.SetActive(false);
+        StartCoroutine(PlaySoundThenDisable());
     }
 
     public void ResetHintCoin()
@@ -51,5 +51,17 @@ public class HintCoinButton : MonoBehaviour
 
         if (buttonToDisable != null)
             buttonToDisable.gameObject.SetActive(true);
+    }
+
+    private IEnumerator PlaySoundThenDisable()
+    {
+        if (collectSFX != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(collectSFX);
+            yield return new WaitForSeconds(collectSFX.length);
+        }
+
+        if (buttonToDisable != null)
+            buttonToDisable.gameObject.SetActive(false);
     }
 }

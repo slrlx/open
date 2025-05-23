@@ -22,6 +22,19 @@ public class RoomButtonController : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if (moveButtons != null)
+        {
+            moveButtons.SetActive(false);
+        }
+
+        if (moveImage != null)
+        {
+            moveImage.SetActive(false);
+        }
+    }
+
     private void Update()
     {
         if (isMoveButtonsActive && Input.GetMouseButtonDown(0))
@@ -32,6 +45,21 @@ public class RoomButtonController : MonoBehaviour
                 isMoveButtonsActive = false;
                 moveButtons.SetActive(false);
             }
+        }
+    }
+    // 새로운 방에 들어갈 때 이동 버튼을 숨기기 위한 메서드
+    public void HideMoveButtons()
+    {
+        isMoveButtonsActive = false;
+
+        if (moveButtons != null)
+        {
+            moveButtons.SetActive(false);
+        }
+
+        if (moveImage != null)
+        {
+            moveImage.SetActive(false);
         }
     }
 }
